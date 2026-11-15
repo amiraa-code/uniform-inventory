@@ -3,21 +3,23 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // The password is hashed automatically by the 'hashed' cast on the User model.
+        User::updateOrCreate(
+            ['email' => 'manager@example.com'],
+            ['name' => 'Stores Manager', 'password' => 'password', 'email_verified_at' => now()],
+        );
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // Categories must exist before items, and items before transactions.
+        $this->call([
+            CategorySeeder::class,
+            ItemSeeder::class,
+            StockTransactionSeeder::class,
         ]);
     }
 }
