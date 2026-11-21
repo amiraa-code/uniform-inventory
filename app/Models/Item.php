@@ -74,4 +74,16 @@ class Item extends Model
     {
         return Attribute::get(fn () => round($this->stock_quantity * (float) $this->unit_price, 2));
     }
+
+    /**
+     * $item->stock_status: 'out', 'low' or 'ok'
+     */
+    protected function stockStatus(): Attribute
+    {
+        return Attribute::get(fn () => match (true) {
+            $this->stock_quantity === 0 => 'out',
+            $this->is_low_stock => 'low',
+            default => 'ok',
+        });
+    }
 }
