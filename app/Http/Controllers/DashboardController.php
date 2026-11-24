@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Item;
 use App\Models\StockTransaction;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    public function __invoke(): View
+    public function __invoke(Request $request): View|Response
     {
         $stats = [
             'total_items' => Item::count(),
@@ -31,6 +33,13 @@ class DashboardController extends Controller
             ->latest()
             ->limit(8)
             ->get();
+
+        // The automatic refresh only needs the cards and tables, not the whole page.
+        if ($request->ajax()) {
+            return response()
+                ->view('dashboard._panels', compact('stats', 'lowStockItems', 'recentTransactions'))
+                ->header('Cache-Control', 'no-store');
+        }
 
         return view('dashboard', compact('stats', 'lowStockItems', 'recentTransactions'));
     }

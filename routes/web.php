@@ -3,9 +3,11 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\StockTransactionController;
+use App\Http\Controllers\WeatherController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', DashboardController::class)->name('dashboard');
+Route::get('/weather', WeatherController::class)->name('weather');
 
 // Must be registered before the resource route, otherwise /items/search would be treated as /items/{item}.
 Route::get('/items/search', [ItemController::class, 'search'])->name('items.search');

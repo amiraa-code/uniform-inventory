@@ -1,13 +1,17 @@
 import './bootstrap';
+import { initDashboardRefresh } from './dashboard-refresh';
 import { initItemAutocomplete } from './item-autocomplete';
 import { initLiveFilters } from './live-filter';
 import { initSkuCheck } from './sku-check';
 import { initStockMovementForms } from './stock-movement';
+import { initWeather } from './weather';
 
 initLiveFilters();
 initItemAutocomplete();
 initSkuCheck();
 initStockMovementForms();
+initDashboardRefresh();
+initWeather();
 
 // Mobile navigation: show or hide the menu when the hamburger button is pressed.
 const menuToggle = document.querySelector('[data-menu-toggle]');
