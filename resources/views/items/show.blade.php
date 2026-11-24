@@ -18,7 +18,7 @@
             <button type="button" data-open-modal="movement-modal" class="btn-accent">Record Movement</button>
             <a href="{{ route('items.edit', $item) }}" class="btn-secondary">Edit</a>
             <form method="POST" action="{{ route('items.destroy', $item) }}"
-                  data-confirm="Delete {{ $item->name }} ({{ $item->size }}) and all of its stock history?">
+                data-confirm="Delete {{ $item->name }} ({{ $item->size }}) and all of its stock history?">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="btn-danger">Delete</button>
@@ -46,11 +46,11 @@
                 </div>
                 <div class="flex justify-between gap-4">
                     <dt class="text-slate-500">Unit price</dt>
-                    <dd class="text-right font-medium">£{{ number_format($item->unit_price, 2) }}</dd>
+                    <dd class="text-right font-medium">€{{ number_format($item->unit_price, 2) }}</dd>
                 </div>
                 <div class="flex justify-between gap-4">
                     <dt class="text-slate-500">Stock value</dt>
-                    <dd class="text-right font-medium">£{{ number_format($item->stock_value, 2) }}</dd>
+                    <dd class="text-right font-medium">€{{ number_format($item->stock_value, 2) }}</dd>
                 </div>
             </dl>
             @if ($item->description)

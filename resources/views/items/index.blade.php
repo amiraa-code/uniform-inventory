@@ -74,7 +74,7 @@
                                     'text-amber-600' => $item->stock_status === 'low',
                                 ])>{{ $item->stock_quantity }}</td>
                                 <td class="td hidden text-right md:table-cell">{{ $item->minimum_threshold }}</td>
-                                <td class="td hidden text-right lg:table-cell">£{{ number_format($item->unit_price, 2) }}</td>
+                                <td class="td hidden text-right lg:table-cell">€{{ number_format($item->unit_price, 2) }}</td>
                                 <td class="td hidden sm:table-cell"><x-stock-badge :item="$item" /></td>
                                 <td class="td text-right">
                                     <div class="flex justify-end gap-3 text-sm font-medium">

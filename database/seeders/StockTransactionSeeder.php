@@ -16,9 +16,9 @@ use Illuminate\Support\Facades\DB;
  */
 class StockTransactionSeeder extends Seeder
 {
-    private const SUPPLIERS = ['Arco', 'Portwest', 'Workwear Express', 'Dickies Workwear', 'Banner Corporate'];
+        private const SUPPLIERS = ['Domeman Glove', 'M.Demajo', 'Garmmo', 'Mediterranean Workwear Supplies', 'Arcco Safety Supplies'];
 
-    private const DEPOTS = ['Birmingham Central Depot', 'Wolverhampton Fleet Yard', 'Coventry Hub', 'Walsall Garage', 'Head Office'];
+    private const DEPOTS = ['Marsa Depot', 'Luqa Fleet Yard', 'Ħal Far Garage', 'Qormi Hub', 'Mosta Depot', 'Xewkija Depot (Gozo)', 'Head Office, Valletta'];
 
     private const OUT_REASONS = [
         'Damaged in storage - written off',

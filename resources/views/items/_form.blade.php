@@ -38,7 +38,7 @@
     </div>
 
     <div>
-        <label for="unit_price" class="form-label">Unit price (£)</label>
+        <label for="unit_price" class="form-label">Unit price (€)</label>
         <input type="number" id="unit_price" name="unit_price" value="{{ old('unit_price', $item->unit_price) }}" required
                min="0" step="0.01" inputmode="decimal" class="form-input">
         @error('unit_price') <p class="form-error">{{ $message }}</p> @enderror

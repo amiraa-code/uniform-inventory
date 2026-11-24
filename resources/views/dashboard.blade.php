@@ -22,7 +22,7 @@
         </div>
         <div class="card p-5">
             <p class="text-sm font-medium text-slate-500">Stock value</p>
-            <p class="mt-2 text-3xl font-bold text-slate-900">£{{ number_format($stats['stock_value'], 2) }}</p>
+            <p class="mt-2 text-3xl font-bold text-slate-900">€{{ number_format($stats['stock_value'], 2) }}</p>
             <p class="mt-1 text-xs text-slate-500">Quantity × unit price</p>
         </div>
         <a href="{{ route('items.index', ['status' => 'low']) }}"
