@@ -18,8 +18,11 @@
             ['label' => 'Dashboard', 'route' => 'dashboard', 'active' => 'dashboard'],
             ['label' => 'Inventory', 'route' => 'items.index', 'active' => 'items.*'],
             ['label' => 'Stock Movements', 'route' => 'transactions.index', 'active' => 'transactions.*'],
+            ['label' => 'Scan', 'route' => 'scan', 'active' => 'scan'],
         ];
     @endphp
+
+    
 
     <nav class="bg-slate-900 text-white">
         <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">

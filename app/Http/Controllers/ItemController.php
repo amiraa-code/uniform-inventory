@@ -110,6 +110,23 @@ class ItemController extends Controller
                 : "{$sku} is available.",
         ]);
     }
+    /**
+     * Finds an item by its exact SKU. Used by the camera scanner after it reads a label.
+     */
+    public function lookup(Request $request): JsonResponse
+    {
+        $sku = strtoupper(trim((string) $request->query('sku')));
+        $item = Item::where('sku', $sku)->first();
+
+        if (! $item) {
+            return response()->json(['message' => "No item has the SKU \"{$sku}\"."], 404);
+        }
+
+        return response()->json([
+            'url' => route('items.show', $item),
+            'label' => "{$item->name} – {$item->size}",
+        ]);
+    }
 
     public function create(): View
     {

@@ -3,6 +3,7 @@ import { initDashboardRefresh } from './dashboard-refresh';
 import { initItemAutocomplete } from './item-autocomplete';
 import { initLiveFilters } from './live-filter';
 import { initQrLabels } from './qr-labels';
+import { initScanner } from './scanner';
 import { initSkuCheck } from './sku-check';
 import { initStockMovementForms } from './stock-movement';
 import { initWeather } from './weather';
@@ -14,6 +15,7 @@ initStockMovementForms();
 initDashboardRefresh();
 initWeather();
 initQrLabels();
+initScanner();
 
 // Mobile navigation: show or hide the menu when the hamburger button is pressed.
 const menuToggle = document.querySelector('[data-menu-toggle]');
