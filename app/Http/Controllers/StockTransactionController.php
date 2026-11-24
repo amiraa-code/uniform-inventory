@@ -46,11 +46,13 @@ class StockTransactionController extends Controller
         return view('transactions.index', compact('transactions'));
     }
 
-    public function create(Request $request): View
+        public function create(Request $request): View
     {
+        // The item can be pre-selected from a link such as /transactions/create?item=5&type=in
+        $selectedItemId = $request->old('item_id', $request->query('item'));
+
         return view('transactions.create', [
-            'items' => Item::orderBy('name')->orderBy('id')->get(),
-            'selectedItemId' => $request->integer('item') ?: null,
+            'selectedItem' => $selectedItemId ? Item::find($selectedItemId) : null,
             'selectedType' => TransactionType::tryFrom((string) $request->query('type'))?->value,
         ]);
     }

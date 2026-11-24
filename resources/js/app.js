@@ -1,7 +1,11 @@
 import './bootstrap';
+import { initItemAutocomplete } from './item-autocomplete';
 import { initLiveFilters } from './live-filter';
+import { initStockMovementForms } from './stock-movement';
 
 initLiveFilters();
+initItemAutocomplete();
+initStockMovementForms();
 
 // Mobile navigation: show or hide the menu when the hamburger button is pressed.
 const menuToggle = document.querySelector('[data-menu-toggle]');

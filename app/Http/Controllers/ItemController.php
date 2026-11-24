@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\JsonResponse;
 use App\Enums\TransactionType;
 use App\Http\Requests\StoreItemRequest;
 use App\Http\Requests\UpdateItemRequest;
@@ -47,6 +48,41 @@ class ItemController extends Controller
         $categories = Category::orderBy('name')->get();
 
         return view('items.index', compact('items', 'categories'));
+    }
+    /**
+     * Returns up to 8 items as JSON for the autocomplete on the Record Movement form.
+     * Every word typed must match the name, SKU or size, so "boot uk 9" finds the UK 9 boots.
+     */
+    public function search(Request $request): JsonResponse
+    {
+        $words = preg_split('/\s+/', trim((string) $request->query('q')), -1, PREG_SPLIT_NO_EMPTY);
+
+        if ($words === []) {
+            return response()->json([]);
+        }
+
+        $items = Item::query()
+            ->where(function ($query) use ($words) {
+                foreach ($words as $word) {
+                    $query->where(function ($query) use ($word) {
+                        $query->where('name', 'like', "%{$word}%")
+                            ->orWhere('sku', 'like', "%{$word}%")
+                            ->orWhere('size', 'like', "%{$word}%");
+                    });
+                }
+            })
+            ->orderBy('name')
+            ->orderBy('id')
+            ->limit(8)
+            ->get()
+            ->map(fn (Item $item) => [
+                'id' => $item->id,
+                'label' => "{$item->name} – {$item->size} ({$item->sku})",
+                'stock_quantity' => $item->stock_quantity,
+                'stock_status' => $item->stock_status,
+            ]);
+
+        return response()->json($items);
     }
 
     public function create(): View

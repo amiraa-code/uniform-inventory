@@ -1,6 +1,6 @@
 {{--
     Stock movement form, used on the "Record Movement" page and inside the modal on an item's page.
-    Pass $item to fix the item (hidden field), or $items to show a dropdown.
+    Pass $item to fix the item (hidden field). Otherwise an autocomplete search box is shown.
 --}}
 @php
     $typeOptions = [
@@ -18,16 +18,21 @@
     @isset($item)
         <input type="hidden" name="item_id" value="{{ $item->id }}">
     @else
-        <div>
-            <label for="item_id" class="form-label">Uniform item</label>
-            <select id="item_id" name="item_id" required class="form-input">
-                <option value="">Select an item</option>
-                @foreach ($items as $option)
-                    <option value="{{ $option->id }}" @selected(old('item_id', $selectedItemId ?? null) == $option->id)>
-                        {{ $option->name }} – {{ $option->size }} ({{ $option->sku }}) · {{ $option->stock_quantity }} in stock
-                    </option>
-                @endforeach
-            </select>
+        {{-- Autocomplete: typing searches /items/search with fetch() and shows matching items below the box. --}}
+        <div class="relative" data-item-autocomplete data-search-url="{{ route('items.search') }}">
+            <label for="item_search" class="form-label">Uniform item</label>
+            <input type="search" id="item_search" autocomplete="off" required
+                   role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="item-suggestions"
+                   value="{{ $selectedItem ? "{$selectedItem->name} – {$selectedItem->size} ({$selectedItem->sku})" : '' }}"
+                   placeholder="Type a name, SKU or size, e.g. boots UK 9" class="form-input">
+            <input type="hidden" name="item_id" value="{{ $selectedItem?->id }}">
+
+            <ul id="item-suggestions" role="listbox"
+                class="absolute z-10 mt-1 hidden max-h-72 w-full overflow-auto rounded-md bg-white py-1 text-sm shadow-lg ring-1 ring-slate-200"></ul>
+
+            <p data-selected-item @class(['mt-1 text-xs text-slate-500', 'hidden' => ! $selectedItem])>
+                Current stock: <span data-item-stock="{{ $selectedItem?->id }}" class="font-semibold">{{ $selectedItem?->stock_quantity }}</span>
+            </p>
             @error('item_id') <p class="form-error">{{ $message }}</p> @enderror
         </div>
     @endisset
@@ -65,7 +70,7 @@
 
     <div>
         <label for="notes" class="form-label">Notes <span class="font-normal text-slate-400">(optional)</span></label>
-        <textarea id="notes" name="notes" rows="2" maxlength="500" placeholder="e.g. Issued to Driver #402 - Lagos Depot"
+        <textarea id="notes" name="notes" rows="2" maxlength="500" placeholder="e.g. Issued to Driver #402 - Marsa Depot"
                   class="form-input">{{ old('notes') }}</textarea>
         @error('notes') <p class="form-error">{{ $message }}</p> @enderror
     </div>
@@ -76,6 +81,6 @@
         @else
             <a href="{{ url()->previous() }}" class="btn-secondary">Cancel</a>
         @endif
-        <button type="submit" class="btn-primary">Save Movement</button>
+        <button type="submit" class="btn-primary disabled:cursor-wait disabled:opacity-60">Save Movement</button>
     </div>
 </form>

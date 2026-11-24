@@ -25,6 +25,13 @@ class StoreStockTransactionRequest extends FormRequest
         ];
     }
 
+    public function messages(): array
+    {
+        return [
+            'item_id.required' => 'Choose an item from the suggestions list.',
+        ];
+    }
+
     public function attributes(): array
     {
         return [
