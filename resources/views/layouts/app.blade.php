@@ -74,5 +74,7 @@
 
         @yield('content')
     </main>
+    {{-- Messages shown by JavaScript after a fetch() request, e.g. "Stock movement saved". --}}
+    <div id="toast-region" aria-live="polite" class="pointer-events-none fixed inset-x-0 top-4 z-50 flex flex-col items-center gap-2 px-4"></div>
 </body>
 </html>

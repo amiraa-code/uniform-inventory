@@ -11,7 +11,8 @@
     $currentType = old('type', $selectedType ?? 'allocated');
 @endphp
 
-<form method="POST" action="{{ route('transactions.store') }}" class="flex flex-col gap-5">
+{{-- data-ajax-form: JavaScript sends this form with fetch(). Without JavaScript it still works as a normal POST. --}}
+<form method="POST" action="{{ route('transactions.store') }}" data-ajax-form class="flex flex-col gap-5">
     @csrf
 
     @isset($item)

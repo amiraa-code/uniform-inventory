@@ -11,14 +11,14 @@
                 <span>{{ $item->sku }}</span>
                 <span>&middot;</span>
                 <span>Size {{ $item->size }}</span>
-                <x-stock-badge :item="$item" />
+                <span data-item-badge="{{ $item->id }}"><x-stock-badge :item="$item" /></span>
             </p>
         </div>
         <div class="flex flex-wrap gap-2">
             <button type="button" data-open-modal="movement-modal" class="btn-accent">Record Movement</button>
             <a href="{{ route('items.edit', $item) }}" class="btn-secondary">Edit</a>
             <form method="POST" action="{{ route('items.destroy', $item) }}"
-                data-confirm="Delete {{ $item->name }} ({{ $item->size }}) and all of its stock history?">
+                  data-confirm="Delete {{ $item->name }} ({{ $item->size }}) and all of its stock history?">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="btn-danger">Delete</button>
@@ -36,9 +36,7 @@
                 </div>
                 <div class="flex justify-between gap-4">
                     <dt class="text-slate-500">Current stock</dt>
-                    <dd @class(['text-right text-lg font-bold', 'text-red-600' => $item->stock_status === 'out', 'text-amber-600' => $item->stock_status === 'low'])>
-                        {{ $item->stock_quantity }}
-                    </dd>
+                    <dd data-item-stock="{{ $item->id }}" data-stock-colour @class(['text-right text-lg font-bold', 'text-red-600' => $item->stock_status === 'out', 'text-amber-600' => $item->stock_status === 'low'])>{{ $item->stock_quantity }}</dd>
                 </div>
                 <div class="flex justify-between gap-4">
                     <dt class="text-slate-500">Minimum threshold</dt>
@@ -50,7 +48,7 @@
                 </div>
                 <div class="flex justify-between gap-4">
                     <dt class="text-slate-500">Stock value</dt>
-                    <dd class="text-right font-medium">€{{ number_format($item->stock_value, 2) }}</dd>
+                    <dd data-item-value="{{ $item->id }}" class="text-right font-medium">€{{ number_format($item->stock_value, 2) }}</dd>
                 </div>
             </dl>
             @if ($item->description)
@@ -61,38 +59,30 @@
         <section class="card overflow-hidden lg:col-span-2">
             <h2 class="border-b border-slate-200 px-4 py-3 font-semibold text-slate-900">Stock History</h2>
 
-            @if ($transactions->isEmpty())
-                <p class="px-4 py-8 text-center text-sm text-slate-500">No stock movements recorded for this item yet.</p>
-            @else
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-slate-200">
-                        <thead class="bg-slate-50">
-                            <tr>
-                                <th class="th">Date</th>
-                                <th class="th">Type</th>
-                                <th class="th text-right">Qty</th>
-                                <th class="th text-right">Stock After</th>
-                                <th class="th hidden md:table-cell">Reference / Notes</th>
+            {{-- The table is always rendered so a movement saved with fetch() has somewhere to appear. --}}
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-slate-200">
+                    <thead class="bg-slate-50">
+                        <tr>
+                            <th class="th">Date</th>
+                            <th class="th">Type</th>
+                            <th class="th text-right">Qty</th>
+                            <th class="th text-right">Stock After</th>
+                            <th class="th hidden md:table-cell">Reference / Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody data-history-rows="{{ $item->id }}" class="divide-y divide-slate-100">
+                        @forelse ($transactions as $transaction)
+                            @include('items._history_row')
+                        @empty
+                            <tr data-empty-row>
+                                <td colspan="5" class="px-4 py-8 text-center text-sm text-slate-500">No stock movements recorded for this item yet.</td>
                             </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100">
-                            @foreach ($transactions as $transaction)
-                                <tr>
-                                    <td class="td">{{ $transaction->created_at->format('d M Y, H:i') }}</td>
-                                    <td class="td"><x-type-badge :type="$transaction->type" /></td>
-                                    <td @class(['td text-right font-semibold', 'text-green-600' => $transaction->quantity_changed > 0, 'text-red-600' => $transaction->quantity_changed < 0])>
-                                        {{ $transaction->quantity_changed > 0 ? '+' : '' }}{{ $transaction->quantity_changed }}
-                                    </td>
-                                    <td class="td text-right">{{ $transaction->stock_after }}</td>
-                                    <td class="td hidden whitespace-normal md:table-cell">
-                                        <span class="font-medium">{{ $transaction->reference }}</span>
-                                        <span class="text-slate-500">{{ $transaction->notes }}</span>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+            @if ($transactions->hasPages())
                 <div class="border-t border-slate-200 px-4 py-3">
                     {{ $transactions->links() }}
                 </div>
@@ -102,11 +92,11 @@
 
     {{-- Stock movement modal. If the form fails validation, data-open-on-load re-opens it to show the errors. --}}
     <dialog id="movement-modal" @if ($errors->any()) data-open-on-load @endif
-            class="w-[calc(100%-2rem)] max-w-lg rounded-lg p-0 shadow-xl backdrop:bg-slate-900/60">
+            class="m-auto w-[calc(100%-2rem)] max-w-lg rounded-lg p-0 shadow-xl backdrop:bg-slate-900/60">
         <div class="flex items-center justify-between border-b border-slate-200 px-6 py-4">
             <div>
                 <h2 class="font-semibold text-slate-900">Record Stock Movement</h2>
-                <p class="text-sm text-slate-500">{{ $item->name }} ({{ $item->size }}) &middot; {{ $item->stock_quantity }} in stock</p>
+                <p class="text-sm text-slate-500">{{ $item->name }} ({{ $item->size }}) &middot; <span data-item-stock="{{ $item->id }}">{{ $item->stock_quantity }}</span> in stock</p>
             </div>
             <button type="button" data-close-modal class="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600">
                 <span class="sr-only">Close</span>

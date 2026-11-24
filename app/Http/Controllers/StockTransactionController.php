@@ -6,9 +6,11 @@ use App\Enums\TransactionType;
 use App\Http\Requests\StoreStockTransactionRequest;
 use App\Models\Item;
 use App\Models\StockTransaction;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
@@ -53,7 +55,7 @@ class StockTransactionController extends Controller
         ]);
     }
 
-    public function store(StoreStockTransactionRequest $request): RedirectResponse
+    public function store(StoreStockTransactionRequest $request): RedirectResponse|JsonResponse
     {
         $data = $request->validated();
         $type = TransactionType::from($data['type']);
@@ -87,7 +89,7 @@ class StockTransactionController extends Controller
 
         $item = $transaction->item;
 
-        return back()->with('success', sprintf(
+        $message = sprintf(
             '%s: %s%d × %s (%s). Stock is now %d.',
             $type->label(),
             $change > 0 ? '+' : '',
@@ -95,6 +97,23 @@ class StockTransactionController extends Controller
             $item->name,
             $item->size,
             $transaction->stock_after,
-        ));
+        );
+
+        // A fetch() request gets JSON so the page can update itself without reloading.
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => $message,
+                'item' => [
+                    'id' => $item->id,
+                    'stock_quantity' => $item->stock_quantity,
+                    'stock_status' => $item->stock_status,
+                    'stock_value' => '€'.number_format($item->stock_value, 2),
+                    'badge_html' => Blade::render('<x-stock-badge :item="$item" />', ['item' => $item]),
+                ],
+                'row_html' => view('items._history_row', compact('transaction'))->render(),
+            ], 201);
+        }
+
+        return back()->with('success', $message);
     }
 }
