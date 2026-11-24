@@ -36,7 +36,7 @@ export function initStockMovementForms() {
                     return;
                 }
 
-                if (response.status === 419) {
+                if (response.status === 419 || response.status === 401) {
                     showToast('Your session has expired. Please refresh the page and try again.', 'error');
                     return;
                 }

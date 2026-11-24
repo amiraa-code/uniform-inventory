@@ -19,6 +19,11 @@ export function initDashboardRefresh() {
             const response = await fetch(panel.dataset.refreshUrl, {
                 headers: { 'X-Requested-With': 'XMLHttpRequest' },
             });
+            // 401 means the user's session has ended; reloading takes them to the login page.
+            if (response.status === 401) {
+                window.location.reload();
+                return;
+            }
 
             if (response.ok) {
                 panel.innerHTML = await response.text();

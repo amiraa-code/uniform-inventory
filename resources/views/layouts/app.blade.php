@@ -22,8 +22,6 @@
         ];
     @endphp
 
-    
-
     <nav class="bg-slate-900 text-white">
         <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
             <a href="{{ route('dashboard') }}" class="flex items-center gap-2 font-bold tracking-tight">
@@ -32,7 +30,7 @@
             </a>
 
             {{-- Desktop links --}}
-            <div class="hidden items-center gap-1 md:flex">
+            <div class="hidden items-center gap-1 lg:flex">
                 @foreach ($navLinks as $link)
                     <a href="{{ route($link['route']) }}"
                        @class([
@@ -44,11 +42,18 @@
                     </a>
                 @endforeach
                 <a href="{{ route('transactions.create') }}" class="btn-accent ml-3">Record Movement</a>
+
+                {{-- Logged-in user and log out. Logging out is a POST form so it is protected by @csrf. --}}
+                <form method="POST" action="{{ route('logout') }}" class="ml-3 flex items-center gap-2 border-l border-slate-700 pl-3">
+                    @csrf
+                    <span class="text-sm text-slate-400">{{ auth()->user()->name }}</span>
+                    <button type="submit" class="cursor-pointer rounded-md px-2 py-2 text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white">Log out</button>
+                </form>
             </div>
 
             {{-- Mobile hamburger button --}}
             <button type="button" data-menu-toggle aria-controls="mobile-menu" aria-expanded="false"
-                    class="rounded-md p-2 text-slate-300 hover:bg-slate-800 hover:text-white md:hidden">
+                    class="rounded-md p-2 text-slate-300 hover:bg-slate-800 hover:text-white lg:hidden">
                 <span class="sr-only">Open menu</span>
                 <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
@@ -57,7 +62,7 @@
         </div>
 
         {{-- Mobile links, hidden until the hamburger is pressed --}}
-        <div id="mobile-menu" class="hidden border-t border-slate-800 px-4 py-3 md:hidden">
+        <div id="mobile-menu" class="hidden border-t border-slate-800 px-4 py-3 lg:hidden">
             @foreach ($navLinks as $link)
                 <a href="{{ route($link['route']) }}"
                    @class([
@@ -69,6 +74,12 @@
                 </a>
             @endforeach
             <a href="{{ route('transactions.create') }}" class="btn-accent mt-3 w-full">Record Movement</a>
+
+            <form method="POST" action="{{ route('logout') }}" class="mt-3 flex items-center justify-between border-t border-slate-800 pt-3">
+                @csrf
+                <span class="text-sm text-slate-400">Signed in as {{ auth()->user()->name }}</span>
+                <button type="submit" class="rounded-md px-3 py-2 text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white">Log out</button>
+            </form>
         </div>
     </nav>
 
@@ -77,6 +88,7 @@
 
         @yield('content')
     </main>
+
     {{-- Messages shown by JavaScript after a fetch() request, e.g. "Stock movement saved". --}}
     <div id="toast-region" aria-live="polite" class="pointer-events-none fixed inset-x-0 top-4 z-50 flex flex-col items-center gap-2 px-4"></div>
 </body>
