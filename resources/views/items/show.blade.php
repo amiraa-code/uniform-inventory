@@ -54,6 +54,17 @@
             @if ($item->description)
                 <p class="mt-4 border-t border-slate-100 pt-4 text-sm text-slate-600">{{ $item->description }}</p>
             @endif
+            
+            {{-- QR code label for the shelf or bag. Scanning it on the Scan page opens this item. --}}
+            <div class="mt-4 flex items-center gap-4 border-t border-slate-100 pt-4">
+                <canvas data-qr-code="{{ $item->sku }}" width="112" height="112" class="h-28 w-28 shrink-0 rounded ring-1 ring-slate-200"
+                        aria-label="QR code for {{ $item->sku }}"></canvas>
+                <div class="text-sm">
+                    <p class="font-medium text-slate-900">Item label</p>
+                    <p class="font-mono text-xs text-slate-500">{{ $item->sku }}</p>
+                    <a href="#" data-qr-download="{{ $item->sku }}" class="mt-2 inline-block text-xs font-medium text-amber-700 hover:underline">Download label (PNG)</a>
+                </div>
+            </div>
         </section>
 
         <section class="card overflow-hidden lg:col-span-2">

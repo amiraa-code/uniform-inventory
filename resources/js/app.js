@@ -2,6 +2,7 @@ import './bootstrap';
 import { initDashboardRefresh } from './dashboard-refresh';
 import { initItemAutocomplete } from './item-autocomplete';
 import { initLiveFilters } from './live-filter';
+import { initQrLabels } from './qr-labels';
 import { initSkuCheck } from './sku-check';
 import { initStockMovementForms } from './stock-movement';
 import { initWeather } from './weather';
@@ -12,6 +13,7 @@ initSkuCheck();
 initStockMovementForms();
 initDashboardRefresh();
 initWeather();
+initQrLabels();
 
 // Mobile navigation: show or hide the menu when the hamburger button is pressed.
 const menuToggle = document.querySelector('[data-menu-toggle]');
