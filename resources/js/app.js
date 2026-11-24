@@ -1,4 +1,7 @@
 import './bootstrap';
+import { initLiveFilters } from './live-filter';
+
+initLiveFilters();
 
 // Mobile navigation: show or hide the menu when the hamburger button is pressed.
 const menuToggle = document.querySelector('[data-menu-toggle]');

@@ -8,13 +8,14 @@ use App\Models\Item;
 use App\Models\StockTransaction;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class StockTransactionController extends Controller
 {
-    public function index(Request $request): View
+    public function index(Request $request): View|Response
     {
         $search = trim((string) $request->query('search'));
         $type = TransactionType::tryFrom((string) $request->query('type'));
@@ -33,6 +34,12 @@ class StockTransactionController extends Controller
             ->latest()
             ->paginate(20)
             ->withQueryString();
+
+        if ($request->ajax()) {
+            return response()
+                ->view('transactions._results', compact('transactions'))
+                ->header('Cache-Control', 'no-store');
+        }
 
         return view('transactions.index', compact('transactions'));
     }

@@ -9,12 +9,13 @@ use App\Models\Category;
 use App\Models\Item;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class ItemController extends Controller
 {
-    public function index(Request $request): View
+    public function index(Request $request): View|Response
     {
         $search = trim((string) $request->query('search'));
         $status = $request->query('status');
@@ -34,6 +35,14 @@ class ItemController extends Controller
             ->orderBy('id')
             ->paginate(15)
             ->withQueryString(); // keeps the filters in the pagination links
+
+        // Live search sends an AJAX request, so only the results table is returned.
+        // no-store stops the browser caching this partial page under the full page's URL.
+        if ($request->ajax()) {
+            return response()
+                ->view('items._results', compact('items'))
+                ->header('Cache-Control', 'no-store');
+        }
 
         $categories = Category::orderBy('name')->get();
 
