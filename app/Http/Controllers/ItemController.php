@@ -59,7 +59,7 @@ class ItemController extends Controller
 
         if ($words === []) {
             return response()->json([]);
-        }
+    }
 
         $items = Item::query()
             ->where(function ($query) use ($words) {
@@ -83,6 +83,32 @@ class ItemController extends Controller
             ]);
 
         return response()->json($items);
+    }
+    /**
+     * Tells the item form, while the user is typing, whether a SKU is free to use.
+     * "ignore" is the id of the item being edited, so it doesn't clash with its own SKU.
+     */
+    public function checkSku(Request $request): JsonResponse
+    {
+        $sku = strtoupper(trim((string) $request->query('sku')));
+
+        if (! preg_match('/^[A-Z0-9_-]+$/', $sku)) {
+            return response()->json([
+                'available' => false,
+                'message' => 'Use only letters, numbers, dashes and underscores.',
+            ]);
+        }
+
+        $existing = Item::where('sku', $sku)
+            ->when($request->filled('ignore'), fn ($query) => $query->whereKeyNot($request->integer('ignore')))
+            ->first();
+
+        return response()->json([
+            'available' => $existing === null,
+            'message' => $existing
+                ? "Already used by {$existing->name} ({$existing->size})."
+                : "{$sku} is available.",
+        ]);
     }
 
     public function create(): View

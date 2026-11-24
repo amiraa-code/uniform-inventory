@@ -1,10 +1,12 @@
 import './bootstrap';
 import { initItemAutocomplete } from './item-autocomplete';
 import { initLiveFilters } from './live-filter';
+import { initSkuCheck } from './sku-check';
 import { initStockMovementForms } from './stock-movement';
 
 initLiveFilters();
 initItemAutocomplete();
+initSkuCheck();
 initStockMovementForms();
 
 // Mobile navigation: show or hide the menu when the hamburger button is pressed.

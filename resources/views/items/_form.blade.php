@@ -20,8 +20,11 @@
 
     <div>
         <label for="sku" class="form-label">SKU</label>
+        {{-- data-sku-check: JavaScript asks the server whether the SKU is free while the user types. --}}
         <input type="text" id="sku" name="sku" value="{{ old('sku', $item->sku) }}" required maxlength="50"
-               placeholder="e.g. PPE-VEST-XL" class="form-input uppercase">
+            placeholder="e.g. PPE-VEST-XL" class="form-input uppercase" autocomplete="off"
+            data-sku-check="{{ route('items.check-sku') }}" data-ignore-id="{{ $item->id }}">
+        <p data-sku-status aria-live="polite" class="mt-1 hidden text-xs"></p>
         @error('sku') <p class="form-error">{{ $message }}</p> @enderror
     </div>
 

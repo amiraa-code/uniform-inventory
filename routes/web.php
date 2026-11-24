@@ -9,6 +9,7 @@ Route::get('/', DashboardController::class)->name('dashboard');
 
 // Must be registered before the resource route, otherwise /items/search would be treated as /items/{item}.
 Route::get('/items/search', [ItemController::class, 'search'])->name('items.search');
+Route::get('/items/check-sku', [ItemController::class, 'checkSku'])->name('items.check-sku');
 
 Route::resource('items', ItemController::class);
 
